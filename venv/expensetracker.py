@@ -1,4 +1,4 @@
-from datetime import date
+import datetime
 
 
 def expenseTrackerCalc():
@@ -21,7 +21,11 @@ def expenseTrackerCalc():
             date = input("Enter date (YYYY-MM-DD): ")
             if not date:
                 print(f"Date will be set to today's date.")
-                date = date.today()
+                date = datetime.date.today().isoformat()
+            try:    
+                datetime.datetime.strptime(date, "%Y-%m-%d")
+            except ValueError:
+                print("Invalid date format. Please use YYYY-MM-DD.")
                 continue
             item = {}
             item['amount'] = amount
@@ -30,9 +34,18 @@ def expenseTrackerCalc():
             allExpenses.append(item)
             print(f"Added expense: {amount} in category {category} on {date}")
         elif command == "view":
+            if not allExpenses:
+                print("No expenses recorded yet, please add some first.")
+                continue
+            totalExpenseAmount = 0
+            if len(allExpenses) == 0:
+                print("No expenses to show, please add some first.")
+                continue
+            else:
+                print("All Expenses:")
             for expense in allExpenses:
                 totalExpenseAmount = sum(float(expense['amount']) for expense in allExpenses)
-                print(f"Expense: {expense['amount']} -> Category: {expense['category']}")
+                print(f"{expense['date']} | {expense['amount']} | {expense['category']}")
             print(f"Total Expense Amount: {totalExpenseAmount}")
         else:
             print("Unknown command.")
